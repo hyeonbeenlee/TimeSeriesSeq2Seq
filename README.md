@@ -109,11 +109,10 @@ torch.Size([32, 50])
 torch.Size([32, 50])
 ```
 # Accessing model properties
+By inheriting ```architectures.skeleton.Skeleton```, model properties are automatically saved to attributes:  
 - Parameters can be counted by ```model.count_params()```
 - Properties are accessed using ```model.model_info``` attribute.  
-- Another model instance can be created by ```ModelClass(**model.model_init_args)```.  
-
-These features are attributed to ```architectures.skeleton.Skeleton``` class.
+- The identical model instance can be created by ```ModelClass(**model.model_init_args)```.  
 ```
 seq2seq_lstm.count_params()
 
