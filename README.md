@@ -1,5 +1,5 @@
 # NeuralSeq2Seq
-Seq2Seq, Seq2Point modeling using 1DCNN, LSTM, and Attention mechanisms.
+Seq2Seq, Seq2Point modeling using CNN-1D, LSTM, and Attention mechanisms.
 # Imports
 ```
 import torch
