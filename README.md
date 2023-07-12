@@ -7,7 +7,8 @@ The repo implements the following:
 - Bahdanau and Scaled Dot Product attention in LSTM Encoder-Decoder network
 
 Difference between ```Seq2Seq``` and ```Seq2Point``` is the decoder part.  
-The former uses autoregressive LSTM decoder, while the latter uses MLP decoder.  
+The former uses autoregressive LSTM decoder to generate sequence of vectors,  
+while the latter uses MLP decoder to generate a single vector.  
 See [Tutorial.ipynb](https://github.com/hyeonbeenlee/NeuralSeq2Seq/blob/main/Tutorial.ipynb) for details.
 
 # Imports
