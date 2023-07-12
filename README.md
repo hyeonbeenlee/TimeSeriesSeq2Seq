@@ -39,7 +39,7 @@ Unlike ```torch.nn.LSTM```, dropout is applied from the first LSTM layer.
 - ```attention``` Attention in LSTM decoder.  
 Supports ```'bahdanau'``` for Bahdanau style, ```'dotproduct'``` for Scaled Dot Product style, and ```'none``` for non-attended decoder.
 
-**All network parameters are initialized from $\mathcal{N}\sim(0,0.01^2)$, except bias for ```torch.zeros```. See ```architectures.init```**
+**All network parameters are initialized from $\mathcal{N}\sim(0,0.01^2)$, except for bias initialized from ```torch.zeros```. See ```architectures.init```**
 
 ```
 B = 32  # batch size
