@@ -1,5 +1,14 @@
 # NeuralSeq2Seq
 Seq2Seq, Seq2Point modeling using CNN-1D, LSTM, and Attention mechanisms.
+The repo implements the following:  
+- Stacked residual 1D convolution layers
+- (Bidirectional) stacked LSTM layers with:  
+  learnable initial states $(h_0, c_0)$, layer normalization, and the first-layer-dropout ($\xleftrightarrow{}$```torch.nn.LSTM```)
+- Bahdanau and Scaled Dot Product attention in LSTM Encoder-Decoder network
+
+Difference between ```Seq2Seq``` and ```Seq2Point``` is the decoder part.  
+The former uses autoregressive LSTM decoder, while the latter uses MLP decoder.
+
 # Imports
 ```
 import torch
@@ -29,7 +38,7 @@ Unlike ```torch.nn.LSTM```, dropout is applied from the first LSTM layer.
 - ```attention``` Attention in LSTM decoder.  
 Supports ```'bahdanau'``` for Bahdanau style, ```'dotproduct'``` for Scaled Dot Product style, and ```'none``` for non-attended decoder.
 
-All network parameters are initialized from $\mathcal{N}\sim(0,0.01^2)$, except bias for ```torch.zeros```. See ```architectures.init```
+**All network parameters are initialized from $\mathcal{N}\sim(0,0.01^2)$, except bias for ```torch.zeros```. See ```architectures.init```**
 
 ```
 B = 32  # batch size
