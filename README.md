@@ -1,4 +1,4 @@
-# NeuralSeq2Seq
+# TimeSeriesSeq2Seq
 Seq2Seq, Seq2Point modeling using CNN-1D, LSTM, and Attention mechanisms.  
 The repo implements the following:  
 - Stacked residual 1D convolution layers
