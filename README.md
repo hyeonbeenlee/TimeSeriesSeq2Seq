@@ -1,22 +1,20 @@
 # TimeSeriesSeq2Seq
-Seq2Seq, Seq2Point modeling using CNN-1D, LSTM, and Attention mechanisms.  
+Seq2Seq, Seq2Point modeling implementations using 1D convolution, LSTM, Attention mechanisms, Transformers, and Temporal Fusion Transformer(TFT).  
 The repo implements the following:  
-- Stacked residual 1D convolution layers
-- (Bidirectional) stacked LSTM layers with:  
-  learnable initial states $(h_0, c_0)$, layer normalization, and the first-layer-dropout ($\xleftrightarrow{}$```torch.nn.LSTM```)
-- Bahdanau and Scaled Dot Product attention in LSTM Encoder-Decoder network
+- Basic convolution and LSTM layers implementation
+- Bahdanau attention LSTM Encoder-Decoder network by [Bahdanau et al.(2014)](https://arxiv.org/abs/1409.0473)
+- Vanilla Transformer by [Vaswani et al.(2017)](https://arxiv.org/abs/1706.03762). See ```architectures.transformer.Transformer```.
+- Temporal Fusion Transformer by [Lim et al.(2020)](https://arxiv.org/abs/1912.09363). See See ```architectures.tft.TemporalFusionTransformer```.
 
-Difference between ```Seq2Seq``` and ```Seq2Point``` is the decoder part.  
-The former uses autoregressive LSTM decoder to generate sequence of vectors, while the latter uses MLP decoder to generate a single vector.  
+**RNN**-based classes can selectively produce sequence or point outputs:  
+- Difference between ```rnn_seq2seq``` and ```rnn_seq2point``` is the decoder part. The former uses autoregressive LSTM decoder to generate sequence of vectors, while the latter uses MLP decoder to generate a single vector.
+**Transformer**-based classes always produce sequence-to-sequence outputs.  
+
+
+**All network parameters are initialized from $\mathcal{N}\sim(0,0.01^2)$, except for bias initialized from ```torch.zeros```. See ```architectures.init```**.
+
 See [Tutorial.ipynb](https://github.com/hyeonbeenlee/NeuralSeq2Seq/blob/main/Tutorial.ipynb) for details.
 
-# Imports
-```
-import torch
-import torch.nn as nn
-from architectures.seq2seq import LSTMSeq2Seq, CNNLSTMSeq2Seq
-from architectures.seq2point import LSTMSeq2Point, CNNLSTMSeq2Point
-```
 # Configuration
 Supports $(B,L_{in},C_{in})\xrightarrow{network}(B,L_{out},C_{out})$ operations, where  
 ```math
@@ -37,37 +35,18 @@ hidden state dropout in LSTM encoder/decoder(for every time step).
 Unlike ```torch.nn.LSTM```, dropout is applied from the first LSTM layer.  
 - ```layernorm``` Layer normalization in LSTM encoder and decoder.  
 - ```attention``` Attention in LSTM decoder.  
-Supports ```'bahdanau'``` for Bahdanau style, ```'dotproduct'``` for Scaled Dot Product style, and ```'none``` for non-attended decoder.
+Supports ```'bahdanau'``` for Bahdanau style, ```'dotproduct'``` for Dot Product style, and ```'none``` for non-attended decoder.
 
-**All network parameters are initialized from $\mathcal{N}\sim(0,0.01^2)$, except for bias initialized from ```torch.zeros```. See ```architectures.init```**
-
-```
-B = 32  # batch size
-Lin = 100  # input sequence length
-Cin = 6  # input embedding size
-Lout = 20  # output sequence length
-Cout = 50  # output embedding size
-
-hidden_size = 256
-num_layers = 3
-bidirectional = True 
-dropout = 0.3
-layernorm = True 
-attention = "bahdanau"
-```
 
 # Create net instances and input/output
 
 ```
-x = torch.randn(B, Lin, Cin)
-y = torch.randn(B, Lout, Cout)
-
 # LSTM encoder - LSTM decoder - MLP
 seq2seq_lstm = LSTMSeq2Seq(
     Cin, Cout, hidden_size, num_layers, bidirectional, dropout, layernorm, attention
 )  
 
-# 1DCNN+LSTM encoder - LSTM decoder - MLP
+# 1DCNN+LSTM encoder - LSTM decoder
 seq2seq_cnnlstm = CNNLSTMSeq2Seq(
     Cin, Cout, hidden_size, num_layers, bidirectional, dropout, layernorm, attention
 )
@@ -81,12 +60,18 @@ seq2point_lstm = LSTMSeq2Point(
 seq2point_cnnlstm = CNNLSTMSeq2Point(
     Cin, Cout, hidden_size, num_layers, bidirectional, dropout, layernorm
 )
+
+# Transformer
+seq2seq_transformer = Transformer(Cin, Cout, num_layers, n_heads, d_model, dropout, d_ff)
+
+# Temporal Fusion Transformer
+seq2seq_tft=TemporalFusionTransformer(Cin, Cout, num_layers, n_heads, d_model, dropout)
 ```
 
 # Forward operation
 - ```x``` Input to the network. Supports $(B,L_{in},C_{in})$ only.  
+- ```y``` Output label for teacher forcing. Supports $(B,*,C_{out})$ only. Defaults to ```None``` (fully autoregressive).
 - ```teacher_forcing``` Teacher forcing ratio $\in [0,1]$. Defaults to -1 (fully autoregressive).  
-- ```y``` Output label for teacher forcing. Supports $(B,*,C_{out})$ only. Defaults to ```None``` (fully autoregressive).  
 - ```trg_len``` Target sequence length to generate. Defaults to ```1```.
 ```
 # Seq2Seq forward
