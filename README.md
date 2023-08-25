@@ -6,14 +6,15 @@ The repo implements the following:
 - Vanilla Transformer by [Vaswani et al.(2017)](https://arxiv.org/abs/1706.03762). See ```architectures.transformer.Transformer```.
 - Temporal Fusion Transformer by [Lim et al.(2020)](https://arxiv.org/abs/1912.09363). See See ```architectures.tft.TemporalFusionTransformer```.
 
+**Transformer**-based classes always produce sequence-to-sequence outputs.  
 **RNN**-based classes can selectively produce sequence or point outputs:  
 - Difference between ```rnn_seq2seq``` and ```rnn_seq2point``` is the decoder part. The former uses autoregressive LSTM decoder to generate sequence of vectors, while the latter uses MLP decoder to generate a single vector.
-**Transformer**-based classes always produce sequence-to-sequence outputs.  
+ 
 
 
 **All network parameters are initialized from $\mathcal{N}\sim(0,0.01^2)$, except for bias initialized from ```torch.zeros```. See ```architectures.init```**.
 
-See [Tutorial.ipynb](https://github.com/hyeonbeenlee/NeuralSeq2Seq/blob/main/Tutorial.ipynb) for details.
+See [Tutorial.ipynb](https://github.com/hyeonbeenlee/NeuralSeq2Seq/blob/main/Tutorial.ipynb) for details.  
 
 # Configuration
 Supports $(B,L_{in},C_{in})\xrightarrow{network}(B,L_{out},C_{out})$ operations, where  
@@ -38,9 +39,14 @@ Unlike ```torch.nn.LSTM```, dropout is applied from the first LSTM layer.
 Supports ```'bahdanau'``` for Bahdanau style, ```'dotproduct'``` for Dot Product style, and ```'none``` for non-attended decoder.
 
 
-# Create net instances and input/output
+# Creating model instances
 
 ```
+from architectures.rnn_seq2seq import *
+from architectures.rnn_seq2point import *
+from architectures.transformer import *
+from architectures.tft import *
+
 # LSTM encoder - LSTM decoder - MLP
 seq2seq_lstm = LSTMSeq2Seq(
     Cin, Cout, hidden_size, num_layers, bidirectional, dropout, layernorm, attention
@@ -62,37 +68,22 @@ seq2point_cnnlstm = CNNLSTMSeq2Point(
 )
 
 # Transformer
-seq2seq_transformer = Transformer(Cin, Cout, num_layers, n_heads, d_model, dropout, d_ff)
+seq2seq_transformer = Transformer(
+    Cin, Cout, num_layers, n_heads, d_model, dropout, d_ff
+)
 
 # Temporal Fusion Transformer
-seq2seq_tft=TemporalFusionTransformer(Cin, Cout, num_layers, n_heads, d_model, dropout)
+seq2seq_tft = TemporalFusionTransformer(
+    Cin, Cout, num_layers, n_heads, d_model, dropout
+)
 ```
 
 # Forward operation
 - ```x``` Input to the network. Supports $(B,L_{in},C_{in})$ only.  
 - ```y``` Output label for teacher forcing. Supports $(B,*,C_{out})$ only. Defaults to ```None``` (fully autoregressive).
-- ```teacher_forcing``` Teacher forcing ratio $\in [0,1]$. Defaults to -1 (fully autoregressive).  
+- ```teacher_forcing``` Teacher forcing ratio $\in [0,1]$. Defaults to ```-1``` (fully autoregressive).  
 - ```trg_len``` Target sequence length to generate. Defaults to ```1```.
-```
-# Seq2Seq forward
-outseq_lstm = seq2seq_lstm.forward(x, y, teacher_forcing=0.5, trg_len=Lout)
-outseq_cnnlstm = seq2seq_cnnlstm.forward(x, y, teacher_forcing=0.5, trg_len=Lout)
 
-# Seq2Point forward
-outpoint_lstm = seq2point_lstm.forward(x)
-outpoint_cnnlstm = seq2point_cnnlstm.forward(x)
-
-print(outseq_lstm.shape)
-print(outseq_cnnlstm.shape)
-print(outpoint_lstm.shape)
-print(outpoint_cnnlstm.shape)
-```
-```
-torch.Size([32, 20, 50])
-torch.Size([32, 20, 50])
-torch.Size([32, 50])
-torch.Size([32, 50])
-```
 # Accessing model properties
 By inheriting ```architectures.skeleton.Skeleton```, model properties are automatically saved to attributes:  
 - Parameters can be counted by ```model.count_params()```
