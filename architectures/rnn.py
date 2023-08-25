@@ -118,10 +118,13 @@ class StackedLSTMCell(nn.Module):
             output, out_state = rnn(output, state)
             # if i < self.num_layers - 1:
             output = self.dropout(output)
-            out_state=(output, out_state[1])
+            out_state = (output, out_state[1])
             output_states += [out_state]
         return output, output_states  # last layer hx, all layers (hx,cx)
+
+
 nn.LSTM
+
 
 class ForwardLSTMLayer(nn.Module):
     def __init__(

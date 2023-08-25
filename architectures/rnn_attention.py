@@ -67,7 +67,7 @@ class BahdanauAttention(nn.Module):
         return attn_values, attn_scores  # (B,D*H), (B,L)
 
 
-class ScaledDotProductAttention(nn.Module):
+class DotProductAttention(nn.Module):
     def __init__(
         self,
         hidden_size: int,

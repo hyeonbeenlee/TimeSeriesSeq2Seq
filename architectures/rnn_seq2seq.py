@@ -18,7 +18,7 @@ from architectures.skeleton import Skeleton
 from architectures.rnn import *
 from architectures.cnn import *
 from architectures.mlp import *
-from architectures.attention import *
+from architectures.rnn_attention import *
 from architectures.init import initialize
 
 
@@ -176,7 +176,7 @@ class LSTMAttentionDecoder(Skeleton):
         )
         self.attention = {
             "bahdanau": BahdanauAttention,
-            "dotproduct": ScaledDotProductAttention,
+            "dotproduct": DotProductAttention,
         }[attention]
         self.attention = self.attention(
             hidden_size=hidden_size, bidirectional=bidirectional

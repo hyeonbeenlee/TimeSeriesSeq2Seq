@@ -14,7 +14,8 @@ import math
 
 sys.path.append(os.getcwd())
 from architectures.skeleton import Skeleton
-from architectures.seq2seq import *
+from architectures.rnn_seq2seq import *
+
 
 class LSTMSeq2Point(Skeleton):
     def __init__(

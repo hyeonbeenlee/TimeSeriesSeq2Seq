@@ -244,9 +244,9 @@ class TemporalFusionTransformer(Skeleton):
         self,
         input_size: int,
         output_size: int,
-        d_model: int = 256,
         num_layers: int = 1,
         n_heads: int = 4,
+        d_model: int = 256,
         dropout: float = 0.1,
     ) -> None:
         """
@@ -329,13 +329,13 @@ class TemporalFusionTransformer(Skeleton):
 
     def forward(self, x, y=None, trg_len: int = 1, teacher_forcing: float = -1):
         batch_size, length_x, input_size = x.size()
-        trg_len=y.shape[1] if y is not None else trg_len
+        trg_len = y.shape[1] if y is not None else trg_len
 
         sos = torch.zeros(batch_size, 1, self.output_size, device=x.device)
         dec_input = [sos]
         enc_states, cell_states = self.encode(x)
         for t in range(trg_len):
-            out = self.decode(torch.cat(dec_input,dim=1), enc_states, cell_states)
+            out = self.decode(torch.cat(dec_input, dim=1), enc_states, cell_states)
             p = random.uniform(0, 1)
             if p < teacher_forcing and y is not None:
                 dec_input += [y[:, t, :].unsqueeze(1)]
@@ -346,16 +346,18 @@ class TemporalFusionTransformer(Skeleton):
 
 if __name__ == "__main__":
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    batch_size=16
-    length_x=100
-    input_size=27
-    length_y=20
-    output_size=6
+    batch_size = 16
+    length_x = 100
+    input_size = 27
+    length_y = 20
+    output_size = 6
     x = torch.rand(batch_size, length_x, input_size, device=device)
     y = torch.rand(batch_size, length_y, output_size, device=device)
 
-    model = TemporalFusionTransformer(input_size=input_size, output_size=output_size).to(device)
-    out = model.forward(x, y) # with decoder inputs
+    model = TemporalFusionTransformer(
+        input_size=input_size, output_size=output_size
+    ).to(device)
+    out = model.forward(x, y)  # with decoder inputs
     out.mean().backward()
-    out=model.forward(x, trg_len=50) # autoregressive
+    out = model.forward(x, trg_len=50)  # autoregressive
     out.mean().backward()
