@@ -5,11 +5,13 @@ import numpy as np
 
 
 class Skeleton(nn.Module):
+    model_info = {}
+
     def count_params(self):
         num_params = 0
         for param in self.parameters():
             num_params += np.prod(param.data.shape)
-        print(f"Number of trainable parameters: {num_params}")
+        print(f"Number of trainable parameters: {num_params:,}")
         return num_params
 
     def print_model_info(self):
@@ -35,7 +37,6 @@ class Skeleton(nn.Module):
             pass
         self.model_init_args = {}
         self.model_init_args.update(locals)
-        del self.model_init_args["__class__"]
 
     def set_device(self):
         if platform.system() == "Darwin" and torch.backends.mps.is_available():
