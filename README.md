@@ -1,5 +1,5 @@
 # TimeSeriesSeq2Seq
-Seq2Seq, Seq2Point modeling implementations using 1D convolution, LSTM, Attention mechanisms, Transformers, and Temporal Fusion Transformer(TFT).  
+Seq2Seq, Seq2Point modeling implementations using 1D convolution, LSTM, Attention mechanisms, Transformer, and Temporal Fusion Transformer(TFT).  
 The repo implements the following:  
 - Basic convolution and LSTM layers implementation
 - Bahdanau attention LSTM Encoder-Decoder network by [Bahdanau et al.(2014)](https://arxiv.org/abs/1409.0473)
