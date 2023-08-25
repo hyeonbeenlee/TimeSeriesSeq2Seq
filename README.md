@@ -78,11 +78,13 @@ seq2seq_tft = TemporalFusionTransformer(
 )
 ```
 
-# Forward operation
+# Autoregressive forward operation
 - ```x``` Input to the network. Supports $(B,L_{in},C_{in})$ only.  
 - ```y``` Output label for teacher forcing. Supports $(B,*,C_{out})$ only. Defaults to ```None``` (fully autoregressive).
 - ```teacher_forcing``` Teacher forcing ratio $\in [0,1]$. Defaults to ```-1``` (fully autoregressive).  
 - ```trg_len``` Target sequence length to generate. Defaults to ```1```.
+
+If only ```x``` and ```trg_len``` is given as arguments, the model will autoregressively produce ```trg_len``` length of outputs. 
 
 # Accessing model properties
 By inheriting ```architectures.skeleton.Skeleton```, model properties are automatically saved to attributes:  
