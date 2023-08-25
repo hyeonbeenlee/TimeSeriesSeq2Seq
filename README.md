@@ -4,7 +4,7 @@ The repo implements the following:
 - Basic convolution and LSTM layers implementation
 - Bahdanau attention LSTM Encoder-Decoder network by [Bahdanau et al.(2014)](https://arxiv.org/abs/1409.0473)
 - Vanilla Transformer by [Vaswani et al.(2017)](https://arxiv.org/abs/1706.03762). See ```architectures.transformer.Transformer```.
-- Temporal Fusion Transformer by [Lim et al.(2020)](https://arxiv.org/abs/1912.09363). See See ```architectures.tft.TemporalFusionTransformer```.
+- Temporal Fusion Transformer by [Lim et al.(2020)](https://arxiv.org/abs/1912.09363). See ```architectures.tft.TemporalFusionTransformer```.
 
 **Transformer**-based classes always produce sequence-to-sequence outputs.  
 **RNN**-based classes can selectively produce sequence or point outputs:  
