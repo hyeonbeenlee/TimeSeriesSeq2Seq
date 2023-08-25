@@ -19,6 +19,14 @@ from architectures.cnn import *
 from architectures.mlp import *
 
 
+def concatenate_states(encoder_states):
+    keys = []
+    for d, direction in enumerate(encoder_states):
+        keys += [torch.stack([state[-1][0] for state in direction], dim=1)]  # (B,L,H)
+    keys = torch.cat(keys, dim=-1)  # (B,L,D*H) (bidirectional) encoder states
+    return keys
+
+
 class BahdanauAttention(nn.Module):
     def __init__(
         self,
@@ -43,15 +51,11 @@ class BahdanauAttention(nn.Module):
         else:
             query = decoder_state  # (B,D*H)
         # pre-compute encoder state projections
-        proj_keys = []
-        keys = []
-        for d, direction in enumerate(encoder_states):
-            keys += [
-                torch.stack([state[-1][0] for state in direction], dim=1)
-            ]  # (B,L,H)
-        keys = torch.cat(keys, dim=-1)  # (B,L,D*H) (bidirectional) encoder states
+        keys = concatenate_states(
+            encoder_states
+        )  # (B,L,D*H) (bidirectional) encoder states
         proj_keys = self.Ua(keys)  # (B,L,D*H) projected encoder states
-        values = keys  # (B,L,D*H) encoder states
+        V = keys  # (B,L,D*H) encoder states
 
         query = self.Wa(query)  # (B,D*H)
         query = query.unsqueeze(1).repeat(1, keys.shape[1], 1)
@@ -59,7 +63,7 @@ class BahdanauAttention(nn.Module):
         attn_scores = self.Va(attn_scores).squeeze(-1)  # BL
         attn_scores = F.softmax(attn_scores, dim=1)  # BL
         attn_scores = attn_scores.unsqueeze(2)
-        attn_values = torch.mul(attn_scores, values).sum(dim=1)  # BH
+        attn_values = torch.mul(attn_scores, V).sum(dim=1)  # BH
         return attn_values, attn_scores  # (B,D*H), (B,L)
 
 
@@ -84,12 +88,12 @@ class ScaledDotProductAttention(nn.Module):
                 torch.stack([state[-1][0] for state in direction], dim=1)
             ]  # (B,L,H)
         keys = torch.cat(keys, dim=-1)  # (B,L,D*H) (bidirectional) encoder states
-        values = keys  # (B,L,D*H) encoder states
+        V = keys  # (B,L,D*H) encoder states
 
         query = query.unsqueeze(1).repeat(1, keys.shape[1], 1)  # (B,L,D*H)
         attn_scores = torch.mul(query, keys).sum(dim=-1)  # (B,L) dotproduct
         attn_scores /= math.sqrt(self.hidden_size)  # scaled
         attn_scores = F.softmax(attn_scores, dim=1)  # (B,L)
         attn_scores = attn_scores.unsqueeze(2)
-        attn_values = torch.mul(attn_scores, values).sum(dim=1)  # BH
+        attn_values = torch.mul(attn_scores, V).sum(dim=1)  # BH
         return attn_values, attn_scores  # (B,D*H), (B,L)
