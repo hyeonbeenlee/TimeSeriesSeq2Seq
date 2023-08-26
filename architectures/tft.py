@@ -244,9 +244,9 @@ class TemporalFusionTransformer(Skeleton):
         self,
         input_size: int,
         output_size: int,
+        d_model: int = 256,
         num_layers: int = 1,
         n_heads: int = 4,
-        d_model: int = 256,
         dropout: float = 0.1,
     ) -> None:
         """
@@ -306,7 +306,9 @@ class TemporalFusionTransformer(Skeleton):
         batch_size, length_x, d_model = enc_all.size()
         batch_size, length_y, d_model = y.size()
 
+        # sequence-to-sequence
         dec_all = self.lstm_decoder.forward(y, enc_last, c_s)
+
         # static enrichment layer
         phi = torch.cat([enc_all, dec_all], dim=1)
         qkv = self.static_enrichment.forward(phi, c_e)
