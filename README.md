@@ -22,9 +22,9 @@ Supports $(B,L_{in},C_{in})\xrightarrow{network}(B,L_{out},C_{out})$ operations,
 \begin{aligned}
 B&=\text{batch\_size}\\
 L_{in}&=\text{input\_sequence\_length (variable)}\\
-C_{in}&=\text{input\_embedding\_size}\\
+C_{in}&=\text{input\_feature\_size}\\
 L_{out}&=\text{output\_sequence\_length (variable)}\\
-C_{out}&=\text{output\_embedding\_size}\\
+C_{out}&=\text{output\_feature\_size}\\
 \end{aligned}
 ```
 - ```hidden_size``` Hidden state size of LSTM encoder.  
