@@ -328,22 +328,22 @@ class nnTransformer(Skeleton):
 
 if __name__ == "__main__":
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    batch_size = 16
-    length_x = 100
-    input_size = 27
-    length_y = 20
-    output_size = 6
+    batch_size=16
+    length_x=100
+    input_size=27
+    length_y=20
+    output_size=6
     x = torch.rand(batch_size, length_x, input_size, device=device)
     y = torch.rand(batch_size, length_y, output_size, device=device)
 
-    model = nnTransformer(input_size=input_size, output_size=output_size).to(device)
-    out = model.forward(x, y)  # with decoder inputs
+    model = nnTransformer(input_size=input_size,output_size=output_size).to(device)
+    out = model.forward(x, y) # with decoder inputs
     out.mean().backward()
-    out = model.forward(x, trg_len=50)  # autoregressive
+    out=model.forward(x, trg_len=50) # autoregressive
     out.mean().backward()
-
-    model = Transformer(input_size=input_size, output_size=output_size).to(device)
-    out = model.forward(x, y)  # with decoder inputs
+    
+    model=Transformer(input_size=input_size,output_size=output_size).to(device)
+    out=model.forward(x,y) # with decoder inputs
     out.mean().backward()
-    out = model.forward(x, trg_len=50)  # autoregressive
+    out=model.forward(x, trg_len=50) # autoregressive
     out.mean().backward()

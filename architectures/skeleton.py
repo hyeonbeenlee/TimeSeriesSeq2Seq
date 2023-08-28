@@ -35,6 +35,10 @@ class Skeleton(nn.Module):
             del locals["self"]  # Cannot be pickled
         except KeyError:
             pass
+        try:
+            del locals["__class__"]  # Cannot be pickled
+        except KeyError:
+            pass
         self.model_init_args = {}
         self.model_init_args.update(locals)
 

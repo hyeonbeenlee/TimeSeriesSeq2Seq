@@ -27,7 +27,7 @@ class GRN(Skeleton):
         self.norm = nn.LayerNorm(d_model)
         self.glu = GLU(d_model)
         self.w1 = nn.Linear(d_model, d_model)
-        self.w2 = nn.Linear(d_model, d_model)
+        self.w2 = nn.Linear(d_model, d_model, bias=False)
         self.w3 = nn.Linear(d_model, d_model, bias=False)
         self.dropout = nn.Dropout(dropout)
         initialize(self)

@@ -56,5 +56,5 @@ class MLP(Skeleton):
 
 if __name__ == "__main__":
     x = torch.rand(64, 10)
-    model = MLP(10, 6, 512, num_layers=3)
-    y = model(x)
+    encoder = MLP(10, 6, 512, num_layers=3)
+    y = encoder(x)

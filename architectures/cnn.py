@@ -55,16 +55,12 @@ class ResidualConvolution(nn.Module):
         self.bn2 = nn.BatchNorm1d(out_channels)
 
         # downsample layers
-        self.conv3 = nn.Conv1d(
+        self.downsample = nn.Conv1d(
             in_channels,
             out_channels,
             kernel_size,
             stride,
         )
-
-    def downsample(self, x):
-        out = self.conv3(x)
-        return out
 
     def forward(self, x):
         out = self.conv1(x)
@@ -83,7 +79,7 @@ class ResidualConvolution(nn.Module):
         return out
 
 
-class StackedResidualConvolution(Skeleton):
+class StackedResidualConvolution1D(Skeleton):
     def __init__(
         self,
         in_channels,
@@ -141,6 +137,6 @@ if __name__ == "__main__":
     Cin = 27
     L = 20
     x = torch.randn(B, Cin, L)
-    net = StackedResidualConvolution(in_channels=Cin, n_stacks=4)
+    net = StackedResidualConvolution1D(in_channels=Cin, n_stacks=4)
     out = net(x)
     pass
